@@ -44,17 +44,25 @@ void SerialApplyFoo(float a[], size_t n)
 }
 
 
-void ParallelApplyFoo(float a[], size_t n) {
+void ParallelApplyFoo(float a[], size_t n, int grainSize) {
 
-   parallel_for(blocked_range<size_t>(0, n, 1), ApplyFoo(a));
+   //parallel_for(blocked_range<size_t>(0, n, grainSize), ApplyFoo(a));
+   parallel_for(blocked_range<size_t>(0, n), ApplyFoo(a), auto_partitioner());
 
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-   size_t sz = 1024*1024*512;
 
-   std::vector<float> a(sz, 0.0f);   
+   if(argc < 2) {
+      std::cout << "usage ./test_parfor <grainsize>" << std::endl;
+      return 1;
+   }
+
+   size_t sz = 1024*1024*512;
+   int grainSize = atoi(argv[1]);
+
+   std::vector<float> a(sz, 0.0f);
 
    for(int i = 0 ; i < a.size() ; i++) {
 
@@ -64,7 +72,7 @@ int main()
    tick_count t0 = tick_count::now();
 
    //SerialApplyFoo(a.data(), a.size());
-   ParallelApplyFoo(a.data(), a.size());
+   ParallelApplyFoo(a.data(), a.size(), grainSize);
 
    tick_count t1 = tick_count::now();
 
