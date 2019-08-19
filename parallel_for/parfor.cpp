@@ -46,8 +46,8 @@ void SerialApplyFoo(float a[], size_t n)
 
 void ParallelApplyFoo(float a[], size_t n, int grainSize) {
 
-   //parallel_for(blocked_range<size_t>(0, n, grainSize), ApplyFoo(a));
-   parallel_for(blocked_range<size_t>(0, n), ApplyFoo(a), auto_partitioner());
+   parallel_for(blocked_range<size_t>(0, n, grainSize), ApplyFoo(a));
+   //parallel_for(blocked_range<size_t>(0, n), ApplyFoo(a), auto_partitioner());
 
 }
 
